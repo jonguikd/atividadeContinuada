@@ -1,5 +1,5 @@
 # Atividade Continuada - POO
-Atividade continuada de POO do terceiro período de CC no <strong>CESAR School</strong>
+Atividade continuada de Programação Orientada a Objetos do terceiro período de CC no <strong>CESAR School</strong>
 <br /><br />
 
 <div align="center">
