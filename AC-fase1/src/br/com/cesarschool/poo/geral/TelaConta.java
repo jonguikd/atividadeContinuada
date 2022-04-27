@@ -1,5 +1,7 @@
 package br.com.cesarschool.poo.geral;
+
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class TelaConta {
@@ -10,14 +12,15 @@ public class TelaConta {
 	public void executaTela() {
 		for(;;) {
 			System.out.println("[1] Incluir\n[2] Alterar\n[3] Encerrar\n[4] Bloquear\n[5] "
-					+ "Desbloquear\n[6] Excluir\n[7] Buscar\n[8] Creditar\n[9] Debitar\n[-1] Sair");
+		+ "Desbloquear\n[6] Excluir\n[7] Buscar\n[8] Creditar\n[9] Debitar\n[-1] Sair");
+			System.out.println(">");
 			int opcao = ENTRADA.nextInt();
 			if(opcao == 1)
 				repositorioConta.incluir(dadosConta());
 			else if(opcao == 2) {
 				System.out.print("Digite o numero da conta que deseja alterar: ");
 				long numero = ENTRADA.nextLong();
-				alterarData(numero);
+				alterarConta(numero);
 			}
 			else if(opcao == 3) {
 				System.out.print("Digite o numero da conta que deseja encerrar: ");
@@ -73,56 +76,83 @@ public class TelaConta {
 		System.out.print("Digite o status: ");
 		int status = ENTRADA.nextInt();
 		System.out.print("Digite a data de abertura: ");
-		int dataAbertura = ENTRADA.nextInt();
-		if(numero > 0 && dataAbertura <= dataAtual.getDayOfMonth())
-			return new Conta(numero, status, dataAbertura);
-		else {
-			System.out.println("Não foi possível inserir a conta");
+		String str = ENTRADA.next();
+		DateTimeFormatter frm = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		LocalDate dataAbertura = LocalDate.parse(str, frm);
+		Conta conta = new Conta(numero, status, dataAbertura);
+		if(validar(conta))
+			return conta;
+		else
 			return null;
-		}
 	}
 	
-	public void alterarData(long numero) {
+	public void alterarConta(long numero) {
 		Conta conta = repositorioConta.buscar(numero);
-		System.out.print("Digite a nova data de abertura: ");
-		int dataAbertura = ENTRADA.nextInt();
-		if(dataAbertura <= dataAtual.getDayOfMonth()) {
+		if(validar(conta)) {
+			System.out.print("Digite a nova data de abertura: ");
+			String str = ENTRADA.nextLine();
+			DateTimeFormatter frm = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			LocalDate dataAbertura = LocalDate.parse(str, frm);
 			conta.setDataAbertura(dataAbertura);
-			repositorioConta.alterar(conta);
+			if(validar(conta)) {
+				if(repositorioConta.alterar(conta))
+					System.out.println("Conta alterada com sucesso!");
+				else
+					System.out.println("Não foi possível concluir a alteração");
+			}
+			else
+				System.out.println("Não foi possível concluir a alteração");
 		}
 		else
-			System.out.println("Não foi possível alterar a data");
+			System.out.println("Conta não existente");
 	}
 	
 	public void alterarStatus(long numero, int status) {
 		Conta conta = repositorioConta.buscar(numero);
-		if(status == 1) {
-			if(conta.getStatus() == 1 || conta.getStatus() == 2)
-				System.out.println("Não é possível desbloquear a conta");
-			else
-				conta.setStatus(status);
+		if(validar(conta)) {
+			if(status == 1) {
+				if(conta.getStatus() == 1 || conta.getStatus() == 2)
+					System.out.println("Não foi possível desbloquear a conta");
+				else
+					conta.setStatus(status);
+			}
+			else if(status == 2) {
+				if(conta.getStatus() == 2)
+					System.out.println("Não foi possível encerrar a conta");
+				else
+					conta.setStatus(status);
+			}
+			else if(status == 3) {
+				if(conta.getStatus() == 2 || conta.getStatus() == 3)
+					System.out.println("Não foi possível bloquear a conta");
+				else
+					conta.setStatus(status);
+			}
+			repositorioConta.alterar(conta);
 		}
-		else if(status == 2) {
-			if(conta.getStatus() == 2)
-				System.out.println("Não é possível encerrar a conta");
-			else
-				conta.setStatus(status);
-		}
-		else if(status == 3) {
-			if(conta.getStatus() == 2 || conta.getStatus() == 3)
-				System.out.println("Não é possível bloquear a conta");
-			else
-				conta.setStatus(status);
-		}
-		repositorioConta.alterar(conta);
+		else
+			System.out.println("Conta não existente");
 	}
 	
 	public void buscarConta(long numero) {
 		Conta conta = repositorioConta.buscar(numero);
-		if(conta != null) {
+		if(validar(conta)) {
 			System.out.println("Número: " + conta.getNumero() + "\nStatus: " + conta.getStatus() 
 			+ "\nData Abertura: " + conta.getDataAbertura() + "\nSaldo: " + conta.getSaldo());
 			conta.calcularScore();
 		}
+		else
+			System.out.println("Conta não existente");
+	}
+	
+	public boolean validar(Conta conta) {
+		if(conta == null)
+			return false;
+		else if(conta.getNumero() <= 0)
+			return false;
+		else if(conta.getDataAbertura().getDayOfMonth() > dataAtual.getDayOfMonth())
+			return false;
+		else
+			return true;
 	}
 }

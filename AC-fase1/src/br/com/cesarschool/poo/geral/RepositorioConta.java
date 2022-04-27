@@ -2,48 +2,61 @@ package br.com.cesarschool.poo.geral;
 
 public class RepositorioConta {
 	private static final int MAX = 1000;
-	
+	private int posicaoAtual = 0;
 	private Conta[] repositorio = new Conta[MAX];
-	int posicaoAtual = 0;
 	
 	private int buscarIndice(long numero) {
 		for(int i = 0; i < MAX; i++) {
-			Conta conta = repositorio[i];
-			if(conta != null && conta.getNumero() == numero) {
+			if(repositorio[i] != null && repositorio[i].getNumero() == numero)
 				return i;
-			}
 		}
 		return -1;
 	}
 	
-	public void incluir(Conta conta) {
-		if(conta != null) {
-			if(buscarIndice(conta.getNumero()) != -1)
-				System.out.println("Conta já existente");
-			else if(posicaoAtual < MAX-1) {
-				for(int i = 0; i < MAX; i++) {
-					if(repositorio[i] == null) {
-						repositorio[i] = conta;
-						break;
-					}
+	public boolean incluir(Conta conta) {
+		if(buscarIndice(conta.getNumero()) != -1) {
+			System.out.println("Conta já existente");
+			return false;
+		}
+		else if(posicaoAtual == MAX-1) {
+			System.out.println("Repositório cheio");
+			return false;
+		}
+		else {
+			for(int i = 0; i < MAX; i++) {
+				if(repositorio[i] == null) {
+					repositorio[i] = conta;
+					break;
 				}
-				posicaoAtual++;
 			}
+			posicaoAtual++;
+			return true;
 		}
 	}
 	
-	public void alterar(Conta conta) {
+	public boolean alterar(Conta conta) {
 		int indice = buscarIndice(conta.getNumero());
-		if(indice != -1)
+		if(indice != -1) {
 			repositorio[indice] = conta;
+			return true;
+		}
+		else {
+			System.out.println("Conta não existente");
+			return false;
+		}
 	}
 	
-	public void excluir(long numero) {
+	public boolean excluir(long numero) {
 		int indice = buscarIndice(numero);
 		if(indice != -1) {
 			repositorio[indice] = null;
 			posicaoAtual--;
-		}		
+			return true;
+		}
+		else {
+			System.out.println("Conta não existente");
+			return false;
+		}
 	}
 	
 	public Conta buscar(long numero) {
