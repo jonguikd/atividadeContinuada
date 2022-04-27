@@ -1,22 +1,20 @@
 package br.com.cesarschool.poo.entidades;
-
 import java.time.LocalDate;
 
 public class Conta {
 	private long numero;
 	private int status;
-	private int dataAbertura;
+	private LocalDate dataAbertura;
 	private double saldo;
 	LocalDate dataAtual = LocalDate.now();
 	
-	public Conta(long numero, int status, int dataAbertura) {
+	public Conta(long numero, int status, LocalDate dataAbertura) {
 		super();
 		this.numero = numero;
 		this.status = status;
 		this.dataAbertura = dataAbertura;
 		this.saldo = 0;
 	}
-
 
 	public long getNumero() {
 		return numero;
@@ -34,11 +32,11 @@ public class Conta {
 		this.status = status;
 	}
 	
-	public int getDataAbertura() {
+	public LocalDate getDataAbertura() {
 		return dataAbertura;
 	}
 
-	public void setDataAbertura(int dataAbertura) {
+	public void setDataAbertura(LocalDate dataAbertura) {
 		this.dataAbertura = dataAbertura;
 	}
 
@@ -55,7 +53,7 @@ public class Conta {
 			if(this.getStatus() == 2)
 				System.out.println("Score: 0");
 			else if(this.getStatus() == 1) {
-				int tempoVida = dataAtual.getDayOfMonth() - dataAbertura;
+				int tempoVida = dataAtual.getDayOfMonth() - dataAbertura.getDayOfMonth();
 				double F = this.getSaldo()*3 + tempoVida*2;
 				if(F < 5800)
 					System.out.println("Score: 1");

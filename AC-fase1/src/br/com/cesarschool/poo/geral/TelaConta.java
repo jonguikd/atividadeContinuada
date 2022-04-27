@@ -90,7 +90,7 @@ public class TelaConta {
 		Conta conta = repositorioConta.buscar(numero);
 		if(validar(conta)) {
 			System.out.print("Digite a nova data de abertura: ");
-			String str = ENTRADA.nextLine();
+			String str = ENTRADA.next();
 			DateTimeFormatter frm = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			LocalDate dataAbertura = LocalDate.parse(str, frm);
 			conta.setDataAbertura(dataAbertura);
@@ -150,7 +150,7 @@ public class TelaConta {
 			return false;
 		else if(conta.getNumero() <= 0)
 			return false;
-		else if(conta.getDataAbertura().getDayOfMonth() > dataAtual.getDayOfMonth())
+		else if(dataAtual.isBefore(conta.getDataAbertura()) || dataAtual.isEqual(conta.getDataAbertura()))
 			return false;
 		else
 			return true;
